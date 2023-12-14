@@ -91,7 +91,7 @@ elif operation.lower() == 'get':
     file = open(filename, 'wb')
     expected_block_number = 1
 else:
-    print("Invalid operation. Please use 'put' or 'get'.")
+    print("Please use 'put' or 'get'.")
 
 while True:
     # Receive data from the server
