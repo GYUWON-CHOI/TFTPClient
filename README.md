@@ -20,7 +20,6 @@
     $ python TFTPcli.py 203.250.133.88 get tftp.txt
 
 # 코드 구조
-## TFTPcli.py
 *  'send_wrq' : 서버에 WRQ 패킷을 전송하는 함수입니다. put을 할 시에 사용됩니다.
 *  'send_rrq' : 서버에 RRQ 패킷을 전송하는 함수입니다. get을 할 시에 사용됩니다.
 *  'send_ack' : 서버에 ACK을 전송하는 함수입니다. get을 할 시에 사용됩니다.
