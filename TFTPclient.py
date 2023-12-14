@@ -123,8 +123,12 @@ while True:
 
         elif opcode == OPCODE['ERROR']:
             error_code = int.from_bytes(data[2:4], byteorder='big')
-            print(ERROR_CODE[error_code])
-            break
+            if error_code == 1:  # File not found
+                print(ERROR_CODE[error_code])
+                sys.exit()
+            else:
+                print(ERROR_CODE[error_code])
+                sys.exit()
 
         else:
             break
