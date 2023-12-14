@@ -137,6 +137,7 @@ while True:
             file.close()
             print(len(file_block))
             break
+            
     except socket.timeout:
         print("Socket Timeout")
         break
