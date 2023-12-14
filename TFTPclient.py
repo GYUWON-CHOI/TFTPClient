@@ -30,7 +30,7 @@ def send_wrq(filename, mode):
     format = f'>h{len(filename)}sB{len(mode)}sB'
     wrq_message = pack(format, OPCODE['WRQ'], bytes(filename, 'utf-8'), 0, bytes(mode, 'utf-8'), 0)
     sock.sendto(wrq_message, server_address)
-    print("WRQ (Opcode 2) ->")
+    print(wrq_message)
 
 def send_rrq(filename, mode):
     format = f'>h{len(filename)}sB{len(mode)}sB'
@@ -49,7 +49,8 @@ def send_data(block_number, file_block, server_new_socket):
     format = f'>hh{len(file_block)}s'
     data_packet = pack(format, OPCODE['DATA'], block_number, file_block)
     sock.sendto(data_packet, server_new_socket)
-    print(f"Data Packet (Block {block_number}) ->")
+    print(block_number)
+    print(data_packet)
 
 # parse command line arguments
 parser = argparse.ArgumentParser(description='TFTP client program')
@@ -111,7 +112,6 @@ while True:
     elif opcode == OPCODE['ACK']:
         block_number = int.from_bytes(data[2:4], 'big')
         file_block = file.read(512)
-        print(f'<- ACK (Block {block_number})')
         if block_number == 0:
             send_data(blnum, file_block, server_new_socket)
             blnum = blnum + 1
