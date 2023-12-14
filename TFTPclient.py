@@ -45,10 +45,14 @@ def send_ack(seq_num, server):
     print(ack_message)
 
 def send_data(block_number, file_block, server_new_socket):
-    format = f'>hh{len(file_block)}s'
-    data_packet = pack(format, OPCODE['DATA'], block_number, file_block)
-    sock.sendto(data_packet, server_new_socket)
-    print(block_number)
+    sock.settimeout(5)
+    try:
+        format = f'>hh{len(file_block)}s'
+        data_packet = pack(format, OPCODE['DATA'], block_number, file_block)
+        sock.sendto(data_packet, server_new_socket)
+        print(block_number)
+    except socket.timeout:
+        print("데이터 전송 중 타임아웃이 발생했습니다. 다시 시도 중...")
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description='TFTP client program')
@@ -91,53 +95,48 @@ else:
     print("Invalid operation. Please use 'put' or 'get'.")
 
 while True:
-    try:
-        # Receive data from the server
-        # Server uses a newly assigned port (not 69) to transfer data
-        # So ACK should be sent to the new socket
-        data, server_new_socket = sock.recvfrom(516)
-        opcode = int.from_bytes(data[:2], 'big')
+    # Receive data from the server
+    # Server uses a newly assigned port (not 69) to transfer data
+    # So ACK should be sent to the new socket
+    data, server_new_socket = sock.recvfrom(516)
+    opcode = int.from_bytes(data[:2], 'big')
 
-        # Check message type
-        if opcode == OPCODE['DATA']:
-            block_number = int.from_bytes(data[2:4], 'big')
-            if block_number == expected_block_number:
-                send_ack(block_number, server_new_socket)
-                file_block = data[4:]
-                file.write(file_block)
-                expected_block_number += 1
-                print(file_block.decode())
-            else:
-                send_ack(block_number, server_new_socket)
-
-        elif opcode == OPCODE['ACK']:
-            block_number = int.from_bytes(data[2:4], 'big')
-            file_block = file.read(512)
-            if block_number == 0 or block_number == blnum:
-                send_data(blnum, file_block, server_new_socket)
-                blnum += 1
-                if not file_block:
-                    break
-            else:
-                send_data(blnum, file_block, server_new_socket)
-
-        elif opcode == OPCODE['ERROR']:
-            error_code = int.from_bytes(data[2:4], byteorder='big')
-            if error_code == 1:  # File not found
-                print(ERROR_CODE[error_code])
-                sys.exit()
-            else:
-                print(ERROR_CODE[error_code])
-                sys.exit()
-
+    # Check message type
+    if opcode == OPCODE['DATA']:
+        block_number = int.from_bytes(data[2:4], 'big')
+        if block_number == expected_block_number:
+            send_ack(block_number, server_new_socket)
+            file_block = data[4:]
+            file.write(file_block)
+            expected_block_number += 1
+            print(file_block.decode())
         else:
-            break
+            send_ack(block_number, server_new_socket)
 
-        if len(file_block) < BLOCK_SIZE:
-            file.close()
-            print(len(file_block))
-            break
-            
-    except socket.timeout:
-        print("Socket Timeout")
+    elif opcode == OPCODE['ACK']:
+        block_number = int.from_bytes(data[2:4], 'big')
+        file_block = file.read(512)
+        if block_number == 0 or block_number == blnum:
+            send_data(blnum, file_block, server_new_socket)
+            blnum += 1
+            if not file_block:
+                break
+        else:
+            send_data(blnum, file_block, server_new_socket)
+
+    elif opcode == OPCODE['ERROR']:
+        error_code = int.from_bytes(data[2:4], byteorder='big')
+        if error_code == 1:  # File not found
+            print(ERROR_CODE[error_code])
+            sys.exit()
+        else:
+            print(ERROR_CODE[error_code])
+            sys.exit()
+
+    else:
+        break
+
+    if len(file_block) < BLOCK_SIZE:
+        file.close()
+        print(len(file_block))
         break
