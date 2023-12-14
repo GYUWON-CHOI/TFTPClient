@@ -52,7 +52,7 @@ def send_data(block_number, file_block, server_new_socket):
         sock.sendto(data_packet, server_new_socket)
         print(block_number)
     except socket.timeout:
-        print("데이터 전송 중 타임아웃이 발생했습니다. 다시 시도 중...")
+        print("Timeout")
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description='TFTP client program')
