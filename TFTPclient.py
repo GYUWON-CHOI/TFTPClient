@@ -50,7 +50,6 @@ def send_data(block_number, file_block, server_new_socket):
     data_packet = pack(format, OPCODE['DATA'], block_number, file_block)
     sock.sendto(data_packet, server_new_socket)
     print(block_number)
-    print(data_packet)
 
 # parse command line arguments
 parser = argparse.ArgumentParser(description='TFTP client program')
