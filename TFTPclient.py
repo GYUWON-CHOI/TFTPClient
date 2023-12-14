@@ -83,7 +83,6 @@ operation = args.operation
 filename = args.filename
 
 if operation.lower() == 'put':
-    sock.settimeout(5)
     send_wrq(filename, mode)
     file = open(filename, 'rb')
     blnum = 1
