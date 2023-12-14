@@ -4,7 +4,7 @@
 # 사용법
     python tftpcli.py ip_address [-p port_number] <get|put> filename
 
-# 인수
+> # 인수
 > ip_address : TFTP 서버의 IP 주소
 > -p : 포트번호
 > <get|put> : 서버에서 파일을 가져오거나 업로드할지 지정
