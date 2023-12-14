@@ -5,7 +5,12 @@
     python TFTPcli.py ip_address [-p port_number] <get|put> filename
 
 # 인수
-* ip_address : TFTP 서버의 IP 주소
-* -p : 포트번호
-* <get|put> : 서버에서 파일을 가져오거나 업로드할지 지정
-* filename : 전송할 파일 이름
+* ip_address : TFTP 서버의 IP 주소입니다.
+* <get|put> : 서버에서 파일을 가져오거나 업로드할지 지정합니다.
+* filename : 전송할 파일 이름입니다.
+
+# 기능
+* 파일의 업로드(put)와 다운로드(get)을 지원합니다.
+* UDP 통신을 사용합니다.
+* 요청한 파일이 서버에 없을 경우 사용자에게 알리고 종료하는 파일 오류처리가 가능합니다.
+* 
