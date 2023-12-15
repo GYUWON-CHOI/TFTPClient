@@ -46,13 +46,21 @@ def send_ack(seq_num, server):
 
 def send_data(block_number, file_block, server_new_socket):
     sock.settimeout(5)
-    try:
-        format = f'>hh{len(file_block)}s'
-        data_packet = pack(format, OPCODE['DATA'], block_number, file_block)
-        sock.sendto(data_packet, server_new_socket)
-        print(block_number)
-    except socket.timeout:
-        print("Timeout")
+    max_retries = 3  # 최대 재시도 횟수
+    retries = 0
+
+    while retries < max_retries:
+        try:
+            format = f'>hh{len(file_block)}s'
+            data_packet = pack(format, OPCODE['DATA'], block_number, file_block)
+            sock.sendto(data_packet, server_new_socket)
+            return
+        except socket.timeout:
+            retries += 1
+            print(f'Timeout({retries}/{max_retries})')
+
+    sys.exit()
+
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description='TFTP client program')
